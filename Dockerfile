@@ -7,6 +7,9 @@ RUN apt-get update && apt-get install -y \
     tesseract-ocr-eng \
     tesseract-ocr-osd
 
+# Set the Tesseract language data prefix
+ENV TESSDATA_PREFIX="/usr/share/tesseract-ocr/4.00/tessdata/"
+
 # Set the working directory
 WORKDIR /app
 
@@ -15,9 +18,6 @@ COPY . .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
-
-# Set the Tesseract path and language data prefix
-ENV TESSDATA_PREFIX="/usr/share/tesseract-ocr/4.00/tessdata/"
 
 # Expose the port FastAPI runs on
 EXPOSE 10000

@@ -1,15 +1,13 @@
 # Use an official Python runtime as a parent image
 FROM python:3.10
 
-# Install system dependencies, including Tesseract and English language files
+# Install system dependencies, including Tesseract with English language files
 RUN apt-get update && apt-get install -y \
     tesseract-ocr \
     tesseract-ocr-eng \
-    tesseract-ocr-osd && \
-    mkdir -p /usr/share/tesseract-ocr/4.00/tessdata/ && \
-    cp -r /usr/share/tesseract-ocr/4.00/tessdata/* /usr/share/tesseract-ocr/4.00/tessdata/
+    tesseract-ocr-osd
 
-# Set the Tesseract language data prefix
+# ✅ Explicitly set the Tesseract data directory
 ENV TESSDATA_PREFIX="/usr/share/tesseract-ocr/4.00/tessdata/"
 
 # Set the working directory

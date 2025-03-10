@@ -10,6 +10,10 @@ import os
 os.environ["TESSDATA_PREFIX"] = "/usr/share/tesseract-ocr/4.00/tessdata/"
 pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
 
+# ✅ Verify Tesseract installation
+if not os.path.exists(os.path.join(os.environ["TESSDATA_PREFIX"], "eng.traineddata")):
+    raise RuntimeError("Tesseract language data is missing! Check installation.")
+
 # ✅ Create FastAPI App
 app = FastAPI()
 

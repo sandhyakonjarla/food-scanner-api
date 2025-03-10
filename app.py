@@ -4,8 +4,10 @@ import pytesseract
 import re
 from PIL import Image, ImageEnhance, ImageFilter
 import io
+import os
 
-# ✅ Set the correct Tesseract path for Render (Linux)
+# ✅ Ensure Tesseract language data is found
+os.environ["TESSDATA_PREFIX"] = "/usr/share/tesseract-ocr/4.00/tessdata/"
 pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
 
 # ✅ Create FastAPI App
@@ -25,9 +27,14 @@ app.add_middleware(
 async def analyze_food(file: UploadFile = File(...)):
     """Allows users to upload an image and get food ranking results."""
     try:
-        image = Image.open(io.BytesIO(await file.read()))
+        contents = await file.read()
+        image = Image.open(io.BytesIO(contents))
+        image.verify()  # Ensure the image is valid
     except Exception as e:
         return {"error": f"Invalid image file: {str(e)}"}
+
+    # Reload the image after verification
+    image = Image.open(io.BytesIO(contents))
 
     # Preprocess the image
     image = image.convert("L")

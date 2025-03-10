@@ -6,7 +6,7 @@ from PIL import Image, ImageEnhance, ImageFilter
 import io
 import os
 
-# ✅ Ensure Tesseract language data is found
+# ✅ Ensure Tesseract can find the language files
 os.environ["TESSDATA_PREFIX"] = "/usr/share/tesseract-ocr/4.00/tessdata/"
 pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
 
@@ -43,7 +43,10 @@ async def analyze_food(file: UploadFile = File(...)):
     image = image.filter(ImageFilter.EDGE_ENHANCE)
 
     # Perform OCR
-    extracted_text = pytesseract.image_to_string(image)
+    try:
+        extracted_text = pytesseract.image_to_string(image, lang="eng")
+    except pytesseract.pytesseract.TesseractError as e:
+        return {"error": f"Tesseract OCR error: {str(e)}"}
 
     # Clean text
     def clean_text(text):

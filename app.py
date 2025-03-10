@@ -1,4 +1,5 @@
 from fastapi import FastAPI, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
 import pytesseract
 import re
 from PIL import Image, ImageEnhance, ImageFilter
@@ -9,6 +10,15 @@ pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tessera
 
 # ✅ Create FastAPI App
 app = FastAPI()
+
+# ✅ Enable CORS Middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow requests from all origins (Change this to your frontend URL for better security)
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allow all headers
+)
 
 # ✅ Define the `/upload/` endpoint
 @app.post("/upload/")
@@ -66,6 +76,8 @@ async def analyze_food(file: UploadFile = File(...)):
         "Ingredients": extracted_ingredients,
         "Food Ranking": food_rank
     }
+
+# ✅ Add a simple homepage
 @app.get("/")
 def home():
-    return {"message": "Welcome to the AI Food Scanner API! Go to /docs to upload an image."}
+    return {"message": "CORS Fixed! Welcome to the AI Food Scanner API! Go to /docs to upload an image."}

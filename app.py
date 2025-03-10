@@ -6,11 +6,23 @@ from PIL import Image, ImageEnhance, ImageFilter
 import io
 import os
 
-# ✅ Ensure Tesseract can find the language files
-os.environ["TESSDATA_PREFIX"] = "/usr/share/tesseract-ocr/4.00/tessdata/"
+# ✅ Dynamically find the correct Tesseract language directory
+possible_paths = [
+    "/usr/share/tesseract-ocr/tessdata/",
+    "/usr/share/tesseract-ocr/4.00/tessdata/"
+]
+
+# Set the correct TESSDATA_PREFIX
+for path in possible_paths:
+    if os.path.exists(path):
+        os.environ["TESSDATA_PREFIX"] = path
+        break
+else:
+    raise RuntimeError("Tesseract language data is missing! Check installation.")
+
 pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
 
-# ✅ Check if the Tesseract language file exists
+# ✅ Verify that Tesseract can find the language files
 language_file = os.path.join(os.environ["TESSDATA_PREFIX"], "eng.traineddata")
 if not os.path.exists(language_file):
     raise RuntimeError(f"Tesseract language data is missing! Expected at: {language_file}")
